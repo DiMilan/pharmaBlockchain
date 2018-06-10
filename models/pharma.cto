@@ -1,0 +1,67 @@
+namespace org.howest.pharma
+
+
+enum ShipmentStatus {
+  o CREATED
+  o IN_TRANSIT
+  o ARRIVED
+}
+
+abstract transaction ShipmentTransaction {
+  --> Shipment shipment
+}
+
+transaction ShipmentReceived extends ShipmentTransaction {
+}
+
+asset Shipment identified by shipmentId {
+  o String shipmentId
+  o Product product
+  o ShipmentStatus status
+  o Long unitCount
+  --> Contract contract
+}
+
+asset Contract identified by contractId {
+  o String contractId
+  --> Manufacturer manufacturer
+  --> WholeSeller wholeseller
+  --> Pharmacist pharmacist
+  --> Patient patient
+  o DateTime arrivalDateTime
+}
+
+concept Address {
+  o String city optional
+  o String country
+  o String street optional
+  o String zip optional
+}
+
+concept Product{
+  o String serialNumber
+  o String productCode
+  o String batchNumber
+  o Manufacturer manufacturer
+}
+
+abstract participant Business identified by email {
+  o String email
+  o Address address
+  o Double accountBalance
+}
+
+participant Manufacturer extends Business {
+}
+
+participant WholeSeller extends Business {
+}
+
+participant Pharmacist extends Business {
+}
+
+participant Patient extends Business {
+}
+
+transaction SetupDemo {
+}
