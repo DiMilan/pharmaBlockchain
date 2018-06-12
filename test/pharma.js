@@ -1,20 +1,3 @@
-/*
-test
- */
-
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 'use strict';
 
@@ -26,11 +9,11 @@ const path = require('path');
 require('chai').should();
 let sinon = require('sinon');
 
-const namespace = 'org.acme.shipping.perishable';
-let grower_id = 'farmer@email.com';
-let importer_id = 'supermarket@email.com';
+const namespace = 'org.howest.pharma';
+let manufacturer_id = 'manufacturer@email.com';
+let wholeseller_id = 'wholeseller@email.com';
 
-describe('Perishable Shipping Network', () => {
+describe('Pharma Shipping Network', () => {
     // In-memory card store for testing so cards are not persisted to the file system
     const cardStore = require('composer-common').NetworkCardStoreManager.getCardStore( { type: 'composer-wallet-inmemory' } );
     let adminConnection;
@@ -103,27 +86,23 @@ describe('Perishable Shipping Network', () => {
 
     describe('#shipment', () => {
 
-        it('should receive base price for a shipment within temperature range', async () => {
-            // submit the temperature reading
-            const tempReading = factory.newTransaction(namespace, 'TemperatureReading');
-            tempReading.shipment = factory.newRelationship(namespace, 'Shipment', 'SHIP_001');
-            tempReading.centigrade = 4.5;
-            await businessNetworkConnection.submitTransaction(tempReading);
+        it('should receive base price for a shipment', async () => {
+        
 
             // submit the shipment received
             const received = factory.newTransaction(namespace, 'ShipmentReceived');
             received.shipment = factory.newRelationship(namespace, 'Shipment', 'SHIP_001');
             await businessNetworkConnection.submitTransaction(received);
 
-            // check the grower's balance
-            const growerRegistry = await businessNetworkConnection.getParticipantRegistry(namespace + '.Grower');
-            const newGrower = await growerRegistry.get(grower_id);
-            newGrower.accountBalance.should.equal(2500);
+            // check the manufacturer's balance
+            const manufacturerRegistry = await businessNetworkConnection.getParticipantRegistry(namespace + '.Manufacturer');
+            const newManufacturer = await manufacturerRegistry.get(manufacturer_id);
+            newManufacturer.accountBalance.should.equal(2500);
 
             // check the importer's balance
-            const importerRegistry = await businessNetworkConnection.getParticipantRegistry(namespace + '.Importer');
-            const newImporter = await importerRegistry.get(importer_id);
-            newImporter.accountBalance.should.equal(-2500);
+            const wholesellerRegistry = await businessNetworkConnection.getParticipantRegistry(namespace + '.Wholeseller');
+            const newWholeseller = await wholesellerRegistry.get(wholeseller_id);
+            newWholeseller.accountBalance.should.equal(-2500);
 
             // check the state of the shipment
             const shipmentRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.Shipment');
