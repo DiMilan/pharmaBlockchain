@@ -1,10 +1,26 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Sample business network definition.
+ */
 namespace org.howest.pharma
-
-
 enum ShipmentStatus {
   o CREATED
   o IN_TRANSIT
   o ARRIVED
+  o QUARANTINE
 }
 
 abstract transaction ShipmentTransaction {
@@ -13,10 +29,9 @@ abstract transaction ShipmentTransaction {
 
 transaction ShipmentReceived extends ShipmentTransaction {
 }
-
 asset Shipment identified by shipmentId {
   o String shipmentId
-  o Product product
+  --> Product product
   o ShipmentStatus status
   o Long unitCount
   --> Contract contract
@@ -24,6 +39,7 @@ asset Shipment identified by shipmentId {
 
 asset Contract identified by contractId {
   o String contractId
+  o Double unitPrice
   --> Manufacturer manufacturer
   --> WholeSeller wholeseller
   --> Pharmacist pharmacist
@@ -31,6 +47,29 @@ asset Contract identified by contractId {
   o DateTime arrivalDateTime
 }
 
+enum DrugStatus{
+  o OK
+  o QUARANTINE
+  o FALSE
+}
+asset Product identified by serialNumber{
+  o String serialNumber
+  o String productCode
+  o String batchNumber
+   o String hash
+ o DrugStatus status
+  --> Manufacturer manufacturer
+}
+/*asset Drug identified by serialNumber {
+ o String serialNumber
+o String productCode
+ o String batchNumber
+ o String hash
+ o DrugStatus status
+// o DrugTransferLogEntry[] logEntries optional
+// o Root[] roots optional
+ o Manufacturer owner
+}*/
 concept Address {
   o String city optional
   o String country
@@ -38,12 +77,6 @@ concept Address {
   o String zip optional
 }
 
-concept Product{
-  o String serialNumber
-  o String productCode
-  o String batchNumber
-  o Manufacturer manufacturer
-}
 
 abstract participant Business identified by email {
   o String email
@@ -63,5 +96,14 @@ participant Pharmacist extends Business {
 participant Patient extends Business {
 }
 
-transaction SetupDemo {
+transaction CreateProduct {
+ o String serialNumber
+o String productCode
+ o String batchNumber
+--> Manufacturer manufacturer
 }
+
+event CreateProductEvent{
+--> Product product
+}
+
