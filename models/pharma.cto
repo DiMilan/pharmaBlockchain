@@ -19,15 +19,35 @@ namespace org.howest.pharma
 enum ShipmentStatus {
   o CREATED
   o IN_TRANSIT
-  o ARRIVED
+  o ARRIVED_WHOLESELLER
+  o ARRIVED_PHARMACIST
+  o ARRIVED_PATIENT
   o QUARANTINE
 }
+enum ProductStatus {
+  o QUARANTINE
+}
+concept Trace{
+  o DateTime timestamp
+  --> Product product
+--> Business seller
+--> Business buyer
+}
+concept TraceProduct{
+  o DateTime timestamp
+  --> Product product
+--> Manufacturer manufacturer
 
+}
 abstract transaction ShipmentTransaction {
   --> Shipment shipment
 }
 
-transaction ShipmentReceived extends ShipmentTransaction {
+transaction ShipmentReceivedWholeseller extends ShipmentTransaction {
+}
+transaction ShipmentReceivedPatient extends ShipmentTransaction {
+}
+transaction ShipmentReceivedPharmacist extends ShipmentTransaction {
 }
 asset Shipment identified by shipmentId {
   o String shipmentId
@@ -35,6 +55,7 @@ asset Shipment identified by shipmentId {
   o ShipmentStatus status
   o Long unitCount
   --> Contract contract
+  o Trace[] trace optional
 }
 
 asset Contract identified by contractId {
@@ -47,29 +68,15 @@ asset Contract identified by contractId {
   o DateTime arrivalDateTime
 }
 
-enum DrugStatus{
-  o OK
-  o QUARANTINE
-  o FALSE
-}
 asset Product identified by serialNumber{
   o String serialNumber
   o String productCode
   o String batchNumber
    o String hash
- o DrugStatus status
+   o TraceProduct[] trace
+   o ProductStatus status optional
   --> Manufacturer manufacturer
 }
-/*asset Drug identified by serialNumber {
- o String serialNumber
-o String productCode
- o String batchNumber
- o String hash
- o DrugStatus status
-// o DrugTransferLogEntry[] logEntries optional
-// o Root[] roots optional
- o Manufacturer owner
-}*/
 concept Address {
   o String city optional
   o String country
@@ -96,6 +103,20 @@ participant Pharmacist extends Business {
 participant Patient extends Business {
 }
 
+/*concept Node{
+  o String nodeNumber
+o Leaf[] leafs
+}
+concept Leaf{
+  o String leafNumber
+}
+concept Root{
+  o String rootNumber
+  o Node[] nodes
+}
+*/
+
+
 transaction CreateProduct {
  o String serialNumber
 o String productCode
@@ -107,3 +128,7 @@ event CreateProductEvent{
 --> Product product
 }
 
+transaction Verify{
+
+ --> Product product
+}

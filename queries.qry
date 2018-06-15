@@ -1,0 +1,7 @@
+query selectShipment {
+  description: "Select all shipments "
+  statement:
+      SELECT org.howest.pharma.Shipment
+  WHERE(product == _$product)
+     
+}

@@ -27,7 +27,7 @@ rule Create {
     action: ALLOW
 }
 rule Manufacturer {
-    description: "Allow Manufacturer to create product"
+    description: "Allow to register manufacturer"
     participant: "ANY"
     operation: ALL
     resource: "org.howest.pharma.Manufacturer"
@@ -41,24 +41,60 @@ rule Shipment {
     action: ALLOW
 }
 rule Wholeseller {
-    description: "Allow Manufacturer to create product"
+    description: "Allow to register Wholeseller"
     participant: "ANY"
     operation: ALL
     resource: "org.howest.pharma.WholeSeller"
     action: ALLOW
 }
+rule Patient {
+    description: "Allow to register patient"
+    participant: "ANY"
+    operation: ALL
+    resource: "org.howest.pharma.Patient"
+    action: ALLOW
+}
+rule Pharmacist {
+    description: "Allow to register pharmacist"
+    participant: "ANY"
+    operation: ALL
+    resource: "org.howest.pharma.Pharmacist"
+    action: ALLOW
+}
 rule Contract {
-    description: "Allow all to ship product"
+    description: "Allow all to make contract"
     participant: "ANY"
     operation: ALL
     resource: "org.howest.pharma.Contract"
     action: ALLOW
 }
-rule Payout {
+rule ShipmentReceivedWholeseller {
     description: "Allow all to ship product"
+    participant: "org.howest.pharma.WholeSeller"
+    operation: ALL
+    resource: "org.howest.pharma.ShipmentReceivedWholeseller"
+    action: ALLOW
+}
+
+rule ShipmentReceivedPharmacist {
+    description: "Allow all to ship product"
+    participant: "org.howest.pharma.Pharmacist"
+    operation: ALL
+    resource: "org.howest.pharma.ShipmentReceivedPharmacist"
+    action: ALLOW
+}
+rule ShipmentReceivedPatient {
+    description: "Allow all to ship product"
+    participant: "org.howest.pharma.Patient"
+    operation: ALL
+    resource: "org.howest.pharma.ShipmentReceivedPatient"
+    action: ALLOW
+}
+rule verify {
+    description: "Allow all to verify product"
     participant: "ANY"
     operation: ALL
-    resource: "org.howest.pharma.ShipmentReceived"
+    resource: "org.howest.pharma.Verify"
     action: ALLOW
 }
 rule SystemACL {
@@ -83,3 +119,4 @@ rule NetworkAdminSystem {
   resource: "org.hyperledger.composer.system.**"
   action: ALLOW
 }
+
